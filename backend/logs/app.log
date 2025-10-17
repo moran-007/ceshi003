@@ -1,0 +1,47 @@
+2025-10-16T15:59:34.707Z [DEBUG] Route registered: /auth -> ./auth.routes
+2025-10-16T15:59:34.716Z [INFO ] API routes initialized with prefix: /api/v1
+2025-10-16T16:00:01.828Z [DEBUG] Route registered: /auth -> ./auth.routes
+2025-10-16T16:00:01.834Z [INFO ] API routes initialized with prefix: /api/v1
+2025-10-16T16:00:34.540Z [INFO ] API routes initialized with prefix: /api/v1
+2025-10-16T16:00:34.531Z [DEBUG] Route registered: /auth -> ./auth.routes
+2025-10-16T16:00:34.637Z [WARN ] Database connection failed, but server will start anyway for testing
+2025-10-16T16:00:34.643Z [INFO ] Server running on http://0.0.0.0:3000
+2025-10-16T16:00:34.636Z [ERROR] Database connection check failed: {"code":"ER_ACCESS_DENIED_ERROR","errno":1045,"sqlState":"28000","sqlMessage":"Access denied for user 'root'@'localhost' (using password: NO)"}
+2025-10-16T16:00:34.643Z [INFO ] API Documentation available at http://0.0.0.0:3000/api/v1/health
+2025-10-16T16:00:50.759Z [ERROR] Database connection check failed: {"code":"ER_ACCESS_DENIED_ERROR","errno":1045,"sqlState":"28000","sqlMessage":"Access denied for user 'root'@'localhost' (using password: NO)"}
+2025-10-16T16:00:50.760Z [ERROR] Health check failed:
+2025-10-16T16:00:50.769Z [ERROR] HTTP GET /api/v1/health 500 18ms {"clientIp":"127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT; Windows NT 10.0; zh-CN) WindowsPowerShell/5.1.26100.6780","status":500,"duration":18,"method":"GET","url":"/api/v1/health"}
+2025-10-16T16:01:35.973Z [ERROR] Health check failed:
+2025-10-16T16:01:35.974Z [ERROR] HTTP GET /api/v1/health 500 6ms {"clientIp":"127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT; Windows NT 10.0; zh-CN) WindowsPowerShell/5.1.26100.6780","status":500,"duration":6,"method":"GET","url":"/api/v1/health"}
+2025-10-16T16:01:35.972Z [ERROR] Database connection check failed: {"code":"ER_ACCESS_DENIED_ERROR","errno":1045,"sqlState":"28000","sqlMessage":"Access denied for user 'root'@'localhost' (using password: NO)"}
+2025-10-16T16:03:46.284Z [DEBUG] Route registered: /auth -> ./auth.routes
+2025-10-16T16:03:46.291Z [INFO ] API routes initialized with prefix: /api/v1
+2025-10-16T16:03:46.370Z [ERROR] Database connection check failed: {"code":"ER_ACCESS_DENIED_ERROR","errno":1045,"sqlState":"28000","sqlMessage":"Access denied for user 'root'@'localhost' (using password: NO)"}
+2025-10-16T16:03:46.377Z [INFO ] Server running on http://0.0.0.0:3000
+2025-10-16T16:03:46.371Z [WARN ] Database connection failed, but server will start anyway for testing
+2025-10-16T16:03:46.378Z [INFO ] API Documentation available at http://0.0.0.0:3000/api/v1/health
+2025-10-16T16:04:01.920Z [INFO ] HTTP GET /api/v1/health 200 9ms {"clientIp":"127.0.0.1","userAgent":"Mozilla/5.0 (Windows NT; Windows NT 10.0; zh-CN) WindowsPowerShell/5.1.26100.6780","status":200,"duration":9,"method":"GET","url":"/api/v1/health"}
+2025-10-16T16:05:00.776Z [DEBUG] Route registered: /auth -> ./auth.routes
+2025-10-16T16:05:00.784Z [INFO ] API routes initialized with prefix: /api/v1
+2025-10-16T16:05:00.875Z [WARN ] Database connection failed, but server will start anyway for testing
+2025-10-16T16:05:00.874Z [ERROR] Database connection check failed: {"code":"ER_ACCESS_DENIED_ERROR","errno":1045,"sqlState":"28000","sqlMessage":"Access denied for user 'worker'@'localhost' (using password: YES)"}
+2025-10-16T16:05:00.883Z [INFO ] API Documentation available at http://0.0.0.0:3000/api/v1/health
+2025-10-16T16:05:00.882Z [INFO ] Server running on http://0.0.0.0:3000
+2025-10-16T16:08:55.184Z [DEBUG] Route registered: /auth -> ./auth.routes
+2025-10-16T16:08:55.188Z [INFO ] API routes initialized with prefix: /api/v1
+2025-10-16T16:08:55.251Z [ERROR] Database connection check failed: {"code":"ER_ACCESS_DENIED_ERROR","errno":1045,"sqlState":"28000","sqlMessage":"Access denied for user 'worker'@'localhost' (using password: YES)"}
+2025-10-16T16:08:55.252Z [WARN ] Database connection failed, but server will start anyway for testing
+2025-10-16T16:08:55.258Z [INFO ] API Documentation available at http://0.0.0.0:3000/api/v1/health
+2025-10-16T16:08:55.257Z [INFO ] Server running on http://0.0.0.0:3000
+2025-10-16T16:09:33.409Z [DEBUG] Route registered: /auth -> ./auth.routes
+2025-10-16T16:09:33.421Z [INFO ] API routes initialized with prefix: /api/v1
+2025-10-16T16:09:33.540Z [ERROR] Database connection check failed: {"code":"ER_ACCESS_DENIED_ERROR","errno":1045,"sqlState":"28000","sqlMessage":"Access denied for user 'worker'@'localhost' (using password: YES)"}
+2025-10-16T16:09:33.551Z [INFO ] API Documentation available at http://0.0.0.0:3000/api/v1/health
+2025-10-16T16:09:33.542Z [WARN ] Database connection failed, but server will start anyway for testing
+2025-10-16T16:09:33.551Z [INFO ] Server running on http://0.0.0.0:3000
+2025-10-16T16:12:41.781Z [DEBUG] Route registered: /auth -> ./auth.routes
+2025-10-16T16:12:41.787Z [INFO ] API routes initialized with prefix: /api/v1
+2025-10-16T16:12:41.882Z [INFO ] API Documentation available at http://0.0.0.0:3000/api/v1/health
+2025-10-16T16:12:41.881Z [INFO ] Server running on http://0.0.0.0:3000
+2025-10-16T16:12:41.875Z [ERROR] Database connection check failed: {"code":"ER_ACCESS_DENIED_ERROR","errno":1045,"sqlState":"28000","sqlMessage":"Access denied for user 'worker'@'localhost' (using password: YES)"}
+2025-10-16T16:12:41.875Z [WARN ] Database connection failed, but server will start anyway for testing

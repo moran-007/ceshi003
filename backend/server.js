@@ -1,3 +1,9 @@
+/*
+ * @Author: 陌
+ * @Date: 2025-10-16 20:22:59
+ * @LastEditors: 陌
+ * @LastEditTime: 2025-10-17 00:29:13
+ */
 // Express服务器配置
 const express = require('express');
 const { testConnection } = require('./db/connection');
@@ -9,6 +15,17 @@ const PORT = process.env.SERVER_PORT || 3000;
 // 中间件配置
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// 跨域中间件
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
 
 // 健康检查接口
 app.get('/health', (req, res) => {
@@ -41,21 +58,13 @@ app.get('/db/check', async (req, res) => {
   }
 });
 
-// 示例：获取所有课程
-app.get('/api/courses', async (req, res) => {
-  try {
-    const { executeQuery } = require('./db/connection');
-    const courses = await executeQuery('SELECT * FROM course LIMIT 10');
-    res.status(200).json({
-      success: true,
-      data: courses
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
+// 加载API路由
+const routes = require('./api/routes');
+app.use('/api', routes);
+
+// API文档访问
+app.get('/api-docs', (req, res) => {
+  res.sendFile(__dirname + '/backend/api/swagger.json');
 });
 
 // 启动服务器
@@ -71,7 +80,13 @@ async function startServer() {
       console.log(`服务器运行在 http://localhost:${PORT}`);
       console.log(`健康检查: http://localhost:${PORT}/health`);
       console.log(`数据库检查: http://localhost:${PORT}/db/check`);
-      console.log(`课程列表: http://localhost:${PORT}/api/courses`);
+      console.log(`API文档: http://localhost:${PORT}/api-docs`);
+      console.log('系统功能模块已加载:');
+      console.log('- 用户认证管理');
+      console.log('- 排课管理');
+      console.log('- 签到管理');
+      console.log('- 上课记录管理');
+      console.log('- 扣课管理');
     });
   } catch (error) {
     console.error('服务器启动失败:', error.message);
