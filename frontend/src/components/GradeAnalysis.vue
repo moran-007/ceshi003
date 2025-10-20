@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { userState } from '../store/index.js'
 
 // 动态导入 Chart.js
@@ -137,11 +137,22 @@ export default {
     
     // 获取所有成绩数据
     const allGrades = computed(() => {
-      const mockData = userState.mockData
-      if (!mockData || !mockData.scores) {
-        return generateMockGrades()
+      // 优先使用userState.mockData中的数据
+      if (userState.mockData && userState.mockData.scores && userState.mockData.scores.length > 0) {
+        return userState.mockData.scores
       }
-      return mockData.scores
+      
+      // 提供默认的模拟成绩数据
+      return [
+        { score_id: 1, course_id: 1, course_name: '数据结构', exam_type: 'midterm', exam_type_text: '期中考试', score_value: 85, exam_date: '2023-10-15', remarks: '表现良好' },
+        { score_id: 2, course_id: 1, course_name: '数据结构', exam_type: 'quiz', exam_type_text: '课堂测验', score_value: 92, exam_date: '2023-09-25', remarks: '优秀！' },
+        { score_id: 3, course_id: 2, course_name: '操作系统', exam_type: 'midterm', exam_type_text: '期中考试', score_value: 78, exam_date: '2023-10-10', remarks: '需要加强练习' },
+        { score_id: 4, course_id: 3, course_name: '计算机网络', exam_type: 'assignment', exam_type_text: '课后作业', score_value: 88, exam_date: '2023-09-30', remarks: '作业完成质量较高' },
+        { score_id: 5, course_id: 4, course_name: '数据库原理', exam_type: 'midterm', exam_type_text: '期中考试', score_value: 65, exam_date: '2023-10-12', remarks: '及格，需要加强理解概念' },
+        { score_id: 6, course_id: 1, course_name: '数据结构', exam_type: 'assignment', exam_type_text: '课后作业', score_value: 88, exam_date: '2023-09-20', remarks: '完成度高' },
+        { score_id: 7, course_id: 2, course_name: '操作系统', exam_type: 'quiz', exam_type_text: '课堂测验', score_value: 75, exam_date: '2023-09-18', remarks: '基础概念需加强' },
+        { score_id: 8, course_id: 3, course_name: '计算机网络', exam_type: 'quiz', exam_type_text: '课堂测验', score_value: 90, exam_date: '2023-09-15', remarks: '优秀！' }
+      ]
     })
     
     // 计算整体统计数据
@@ -516,8 +527,10 @@ export default {
 <style scoped>
 .grade-analysis {
   padding: 20px;
-  max-width: 1200px;
+  max-width: 1024px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .analysis-header {

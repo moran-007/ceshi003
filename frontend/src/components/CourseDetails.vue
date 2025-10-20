@@ -187,15 +187,15 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter, useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { userState } from '../store/index.js'
 
 export default {
   name: 'CourseDetails',
   props: {
-    id: {
-      type: String,
-      default: ''
+    courseId: {
+      type: Number,
+      default: 1
     }
   },
   setup(props) {
@@ -206,26 +206,19 @@ export default {
     
     // 获取课程ID，优先使用路由参数，其次使用props
     const courseId = computed(() => {
-      return parseInt(route.params.id || props.id) || 1
+      return parseInt(route.params.id || props.courseId) || 1
     })
     
     // 获取课程详细信息
     const courseDetails = computed(() => {
-      const mockData = userState.mockData
-      if (!mockData || !mockData.courses) {
-        return getDefaultCourseDetails(courseId.value)
-      }
-      
-      // 从用户的课程中查找对应的课程
-      const course = mockData.courses.find(c => c.courseId === courseId.value)
-      if (!course) {
-        return getDefaultCourseDetails(courseId.value)
-      }
-      
-      // 从完整数据模型中获取更多信息
-      if (userState.dataModel) {
-        const fullCourse = userState.dataModel.courses.find(c => c.course_id === courseId.value)
-        if (fullCourse) {
+      // 首先检查userState.mockData中是否有课程数据
+      if (userState.mockData && userState.mockData.courses) {
+        const course = userState.mockData.courses.find(c => c.courseId === courseId.value)
+        if (course) {
+          // 添加成绩数据
+          if (userState.mockData.scores) {
+            course.scores = userState.mockData.scores.filter(s => s.course_id === courseId.value)
+          }
           return {
             id: course.courseId,
             courseName: course.name,
@@ -236,28 +229,87 @@ export default {
             totalHours: course.totalHours,
             remainingHours: course.remainingHours,
             progressPercentage: course.progress,
-            description: fullCourse.description || '这是一门重要的专业课程。',
-            category: fullCourse.category || '专业课',
-            status: fullCourse.status || 'ongoing',
             syllabus: generateSyllabus(),
-            recentAttendance: generateAttendance()
+            recentAttendance: generateAttendance(),
+            scores: course.scores || []
           }
         }
       }
       
-      return {
-        id: course.courseId,
-        courseName: course.name,
-        teacherName: course.teacherName,
-        classTime: '周一 08:00-10:00',
-        location: 'A101',
-        credits: course.credit,
-        totalHours: course.totalHours,
-        remainingHours: course.remainingHours,
-        progressPercentage: course.progress,
-        syllabus: generateSyllabus(),
-        recentAttendance: generateAttendance()
+      // 提供默认的模拟课程数据
+      const mockCourses = {
+        1: {
+          id: 1,
+          courseName: '数据结构',
+          teacherName: '张老师',
+          classTime: '周一 08:00-10:00',
+          location: 'A101',
+          credits: 4,
+          totalHours: 48,
+          remainingHours: 12,
+          progressPercentage: 75,
+          description: '本课程主要介绍数据结构的基本概念、算法和应用。',
+          syllabus: generateSyllabus(),
+          recentAttendance: generateAttendance(),
+          scores: [
+            { exam_type: 'midterm', exam_type_text: '期中考试', score_value: 85, exam_date: '2023-10-15', remarks: '表现良好' },
+            { exam_type: 'quiz', exam_type_text: '课堂测验', score_value: 92, exam_date: '2023-09-25', remarks: '优秀！' }
+          ]
+        },
+        2: {
+          id: 2,
+          courseName: '操作系统',
+          teacherName: '李老师',
+          classTime: '周二 14:00-16:00',
+          location: 'B202',
+          credits: 4,
+          totalHours: 48,
+          remainingHours: 18,
+          progressPercentage: 63,
+          description: '本课程介绍操作系统的基本原理和设计方法。',
+          syllabus: generateSyllabus(),
+          recentAttendance: generateAttendance(),
+          scores: [
+            { exam_type: 'midterm', exam_type_text: '期中考试', score_value: 78, exam_date: '2023-10-10', remarks: '需要加强练习' }
+          ]
+        },
+        3: {
+          id: 3,
+          courseName: '计算机网络',
+          teacherName: '王老师',
+          classTime: '周三 09:00-11:00',
+          location: 'C303',
+          credits: 3,
+          totalHours: 36,
+          remainingHours: 22,
+          progressPercentage: 39,
+          description: '本课程介绍计算机网络的基本概念、原理和技术。',
+          syllabus: generateSyllabus(),
+          recentAttendance: generateAttendance(),
+          scores: [
+            { exam_type: 'assignment', exam_type_text: '课后作业', score_value: 88, exam_date: '2023-09-30', remarks: '作业完成质量较高' }
+          ]
+        },
+        4: {
+          id: 4,
+          courseName: '数据库原理',
+          teacherName: '刘老师',
+          classTime: '周四 10:00-12:00',
+          location: 'D404',
+          credits: 3,
+          totalHours: 36,
+          remainingHours: 8,
+          progressPercentage: 78,
+          description: '本课程介绍数据库系统的基本概念、原理和技术。',
+          syllabus: generateSyllabus(),
+          recentAttendance: generateAttendance(),
+          scores: [
+            { exam_type: 'midterm', exam_type_text: '期中考试', score_value: 65, exam_date: '2023-10-12', remarks: '及格，需要加强理解概念' }
+          ]
+        }
       }
+      
+      return mockCourses[courseId.value] || mockCourses[1]
     })
     
     // 获取课程安排
@@ -286,18 +338,9 @@ export default {
     
     // 获取课程成绩
     const courseGrades = computed(() => {
-      const mockData = userState.mockData
-      if (!mockData || !mockData.scores) {
-        return getDefaultGrades()
-      }
-      
-      // 筛选当前课程的成绩
-      const courseScores = mockData.scores.filter(
-        score => score.course_id === courseId.value || score.course_name === courseDetails.value.courseName
-      )
-      
-      if (courseScores.length > 0) {
-        return courseScores
+      // 从courseDetails中获取成绩数据
+      if (courseDetails.value.scores && courseDetails.value.scores.length > 0) {
+        return courseDetails.value.scores
       }
       
       return getDefaultGrades()
@@ -530,7 +573,7 @@ export default {
 <style scoped>
 .course-details {
   padding: 20px;
-  max-width: 1000px;
+  max-width: 1024px;
   margin: 0 auto;
 }
 

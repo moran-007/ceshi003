@@ -35,14 +35,53 @@
               <li class="nav-item" :class="{ active: currentPath.startsWith('/home/teacher/dashboard') }">
                 <router-link to="/home/teacher/dashboard">教学仪表盘</router-link>
               </li>
-              <li class="nav-item">
-                <a href="#" @click.prevent="showMockData('courses')">课程管理</a>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/home/teacher/course-schedule') }">
+                <router-link to="/home/teacher/course-schedule">课程安排</router-link>
               </li>
-              <li class="nav-item">
-                <a href="#" @click.prevent="showMockData('students')">学生管理</a>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/home/teacher/hours-deduction') }">
+                <router-link to="/home/teacher/hours-deduction">课时扣除</router-link>
               </li>
-              <li class="nav-item">
-                <a href="#" @click.prevent="showMockData('grades')">成绩管理</a>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/home/teacher/attendance') }">
+                <router-link to="/home/teacher/attendance">签到管理</router-link>
+              </li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/home/teacher/performance') }">
+                <router-link to="/home/teacher/performance">业绩统计</router-link>
+              </li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/home/teacher/class-consumption') }">
+                <router-link to="/home/teacher/class-consumption">课消数据</router-link>
+              </li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/home/teacher/students') }">
+                <router-link to="/home/teacher/students">学员查询</router-link>
+              </li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/home/teacher/archives') }">
+                <router-link to="/home/teacher/archives">档案资料</router-link>
+              </li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/home/teacher/profile') }">
+                <router-link to="/home/teacher/profile">个人中心</router-link>
+              </li>
+            </template>
+            
+            <!-- 超级管理员导航 -->
+            <template v-else-if="userState.role === 'superAdmin'">
+              <li class="nav-heading">超级管理员功能</li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/home/superadmin/dashboard') }">
+                <router-link to="/home/superadmin/dashboard">超级管理员控制台</router-link>
+              </li>
+              <li class="nav-heading">系统管理</li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/system/users') }">
+                <router-link to="/system/users">用户管理</router-link>
+              </li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/system/roles') }">
+                <router-link to="/system/roles">角色权限管理</router-link>
+              </li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/system/config') }">
+                <router-link to="/system/config">系统配置</router-link>
+              </li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/system/backup') }">
+                <router-link to="/system/backup">数据备份</router-link>
+              </li>
+              <li class="nav-item" :class="{ active: currentPath.startsWith('/home/superadmin/logs') }">
+                <router-link to="/home/superadmin/logs">系统操作日志</router-link>
               </li>
             </template>
             
@@ -78,6 +117,9 @@
               <li class="nav-item">
                 <a href="#" @click.prevent="showAdminDemo">管理员角色演示</a>
               </li>
+              <li class="nav-item">
+                <a href="#" @click.prevent="showSuperAdminDemo">超级管理员演示</a>
+              </li>
             </template>
           </ul>
         </nav>
@@ -93,6 +135,7 @@
               <button class="demo-btn student-btn" @click="showStudentDemo">学生角色演示</button>
               <button class="demo-btn teacher-btn" @click="showTeacherDemo">教师角色演示</button>
               <button class="demo-btn admin-btn" @click="showAdminDemo">管理员角色演示</button>
+              <button class="demo-btn superadmin-btn" @click="showSuperAdminDemo">超级管理员演示</button>
             </div>
             <p class="login-tip">或者 <router-link to="/login">登录系统</router-link> 访问完整功能</p>
           </div>
@@ -135,7 +178,7 @@
 <script>
 import { computed, onMounted, watch, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import userState from '../store/index.js'
+import { userState, logout } from '../store/index.js'
 
 export default {
   name: 'HomeView',
@@ -182,13 +225,14 @@ export default {
       const roleMap = {
         'student': '学生',
         'teacher': '教师',
-        'admin': '管理员'
+        'admin': '管理员',
+        'superAdmin': '超级管理员'
       }
       return roleMap[userState.role] || '游客'
     })
 
     const handleLogout = () => {
-      userState.logout()
+      logout()
       router.push('/login')
     }
 
@@ -258,6 +302,14 @@ export default {
       userState.isLoggedIn = true
       router.push('/home/admin/dashboard')
     }
+    
+    // 显示超级管理员演示
+    const showSuperAdminDemo = () => {
+      userState.role = 'superAdmin'
+      userState.username = '超级管理员演示账号'
+      userState.isLoggedIn = true
+      router.push('/home/superadmin/dashboard')
+    }
 
     // 监听路由变化，更新当前路径
     watch(
@@ -285,6 +337,7 @@ export default {
         showStudentDemo,
         showTeacherDemo,
         showAdminDemo,
+        showSuperAdminDemo,
         demoContent,
         formatHeader
     }
@@ -470,6 +523,10 @@ export default {
 
 .admin-btn {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.superadmin-btn {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
 }
 
 .demo-btn:hover {

@@ -16,6 +16,7 @@ const recordRoutes = require('./recordRoutes');
 const attendanceRoutes = require('./attendanceRoutes');
 const courseRoutes = require('./courseRoutes');
 const teacherRoutes = require('./teacherRoutes');
+const systemRoutes = require('./systemRoutes'); // 添加系统路由导入
 
 // 注册路由
 router.use('/auth', userRoutes);  // 用户认证相关路由
@@ -26,6 +27,7 @@ router.use('/deduction', deductionRoutes);  // 扣课管理路由
 router.use('/records', recordRoutes);  // 上课记录路由
 router.use('/courses', courseRoutes);  // 课程管理路由
 router.use('/teachers', teacherRoutes);  // 教师管理路由
+router.use('/system', systemRoutes);  // 系统配置和备份路由
 
 // 基础路由
 router.get('/', (req, res) => {
@@ -42,7 +44,8 @@ router.get('/', (req, res) => {
       attendance: '/api/attendance/*',
       records: '/api/records/*',
       deduction: '/api/deduction/*',
-      teachers: '/api/teachers/*'
+      teachers: '/api/teachers/*',
+      system: '/api/system/*'
     }
   });
 });

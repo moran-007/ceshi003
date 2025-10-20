@@ -70,7 +70,7 @@
 <script>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import userState from '../../../store/index.js'
+import { userState } from '../../../store/index.js'
 import { generateCaptcha, getRandomColor, validateCaptcha } from '../utils/captchaUtils.js'
 import { checkAccountValidity, loginApi, mockLogin } from '../services/authService.js'
 import { validateUsername, validatePassword, validateCaptchaInput } from '../utils/validationUtils.js'

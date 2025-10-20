@@ -4,16 +4,32 @@
  * @LastEditors: 陌
  * @LastEditTime: 2025-10-17 00:29:13
  */
-// Express服务器配置
+// 导入所需模块
 const express = require('express');
 const { testConnection } = require('./db/connection');
+const { initSystemTables } = require('./db/init_tables');
 require('dotenv').config();
 
+// 创建Express应用实例
 const app = express();
 const PORT = process.env.SERVER_PORT || 3000;
 
 // 中间件配置
 app.use(express.json());
+
+// 添加CORS支持
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // 在生产环境中应该设置具体的前端域名
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
 app.use(express.urlencoded({ extended: true }));
 
 // 跨域中间件
@@ -74,6 +90,9 @@ async function startServer() {
     const connected = await testConnection();
     if (!connected) {
       console.warn('数据库连接失败，但服务器仍将启动');
+    } else {
+      // 初始化系统配置和备份表
+      await initSystemTables();
     }
 
     app.listen(PORT, () => {

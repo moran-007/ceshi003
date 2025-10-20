@@ -1,7 +1,7 @@
 /**
  * 认证服务
  */
-import userState from '../../../store/index.js'
+import { userState, login } from '../../../store/index.js'
 
 // 检查账号有效性
 export const checkAccountValidity = async () => {
@@ -53,27 +53,18 @@ export const mockLogin = (username, password) => {
     role = 'student'
   }
 
-  // 更新用户状态
-  userState.isLoggedIn = true
-  userState.username = username
-  userState.role = role
-  
-  // 保存到localStorage
-  localStorage.setItem('userToken', 'mock-token-' + Date.now())
-  localStorage.setItem('username', username)
-  localStorage.setItem('userRole', role)
-  
-  // 生成模拟数据
-  userState.generateMockData(role)
+  // 使用store中定义的login函数处理登录逻辑
+  const loginSuccess = login(username, password, role)
   
   return {
-    success: true,
-    data: {
-      token: 'mock-token-' + Date.now(),
+    success: loginSuccess,
+    data: loginSuccess ? {
+      token: localStorage.getItem('userToken'),
       user: {
         username,
         roleName: role
       }
-    }
+    } : null,
+    message: loginSuccess ? '' : '登录失败，请重试'
   }
 }

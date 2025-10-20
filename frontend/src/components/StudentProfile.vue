@@ -11,19 +11,19 @@
         <div class="info-grid">
           <div class="info-item">
             <label>用户名:</label>
-            <span>{{ userState.username || '学生' }}</span>
+            <span>{{ userData.username }}</span>
           </div>
           <div class="info-item">
             <label>学生ID:</label>
-            <span>{{ userState.studentData?.studentId || 'N/A' }}</span>
+            <span>{{ userData.studentId }}</span>
           </div>
           <div class="info-item">
             <label>角色:</label>
-            <span>{{ userState.role || '学生' }}</span>
+            <span>{{ userData.role }}</span>
           </div>
           <div class="info-item">
             <label>班级:</label>
-            <span>{{ userState.studentData?.class || '一年级一班' }}</span>
+            <span>{{ userData.class }}</span>
           </div>
         </div>
       </div>
@@ -88,12 +88,33 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import userState from '../store'
 
 export default {
   name: 'StudentProfile',
   setup() {
+    // 计算属性提供模拟数据支持
+    const userData = computed(() => {
+      // 如果userState有数据，优先使用
+      if (userState.studentData || userState.username) {
+        return {
+          username: userState.username,
+          studentId: userState.studentData?.studentId,
+          role: userState.role,
+          class: userState.studentData?.class
+        }
+      }
+      
+      // 提供默认模拟数据
+      return {
+        username: '张三',
+        studentId: '20210001',
+        role: '学生',
+        class: '计算机科学与技术 2021级一班'
+      }
+    })
+    
     // 密码表单数据
     const currentPassword = ref('')
     const newPassword = ref('')
@@ -185,6 +206,7 @@ export default {
     
     return {
       userState,
+      userData,
       currentPassword,
       newPassword,
       confirmPassword,
@@ -200,7 +222,7 @@ export default {
 <style scoped>
 .student-profile {
   padding: 20px;
-  max-width: 800px;
+  max-width: 1024px;
   margin: 0 auto;
 }
 

@@ -513,6 +513,64 @@ const userState = reactive({
           students: Math.floor(Math.random() * 40) + 60
         }))
       }
+    } else if (role === 'superAdmin') {
+      // 超级管理员数据，包含所有用户、教师、系统配置等
+      this.adminData = {
+        users: [
+          ...(this.dataModel.students || []).map(student => ({
+            id: student.student_id,
+            username: student.name,
+            role: 'student',
+            status: 'active',
+            details: {
+              studentNo: student.student_no,
+              enrolledDate: '2022-09-01'
+            }
+          })),
+          ...(this.dataModel.teachers || []).map(teacher => ({
+            id: 'A' + teacher.teacher_id,
+            username: teacher.name,
+            role: 'teacher',
+            status: 'active',
+            details: {
+              hireDate: '2020-08-15',
+              department: '计算机科学与技术'
+            }
+          })),
+          {
+            id: 'A001',
+            username: 'admin1',
+            role: 'admin',
+            status: 'active',
+            details: {
+              accessLevel: 'system'
+            }
+          },
+          {
+            id: 'SA999',
+            username: 'superadmin',
+            role: 'superAdmin',
+            status: 'active',
+            details: {
+              accessLevel: 'full'
+            }
+          }
+        ],
+        systemStats: {
+          totalUsers: 150,
+          totalTeachers: 25,
+          totalStudents: 120,
+          totalAdmins: 5,
+          activeUsers: 85,
+          onlineUsers: 12
+        },
+        roles: [
+          { id: 1, name: '超级管理员', description: '系统最高权限', protected: true },
+          { id: 2, name: '系统管理员', description: '系统管理权限', protected: false },
+          { id: 3, name: '教师', description: '教学相关权限', protected: false },
+          { id: 4, name: '学生', description: '学习相关权限', protected: false }
+        ]
+      }
     }
   },
   
@@ -531,27 +589,171 @@ const userState = reactive({
 
 // 初始化用户状态
 export function initUserState() {
-  const token = localStorage.getItem('userToken')
-  if (token) {
-    userState.isLoggedIn = true
-    userState.username = localStorage.getItem('username')
-    userState.role = localStorage.getItem('userRole')
-    userState.userId = localStorage.getItem('userId')
-    userState.generateMockData(userState.role)
-  } else {
-    // 默认使用学生角色和模拟数据，方便开发和测试
-    console.log('Using default student role for testing')
-    userState.isLoggedIn = true
-    userState.username = 'student1'
+  try {
+    const token = localStorage.getItem('userToken')
+    if (token) {
+      // 安全地获取localStorage值，提供默认值以防止undefined
+      const username = localStorage.getItem('username') || '默认用户'
+      const role = localStorage.getItem('userRole') || 'student'
+      const userId = localStorage.getItem('userId') || '101'
+      
+      // 更新用户状态
+      userState.isLoggedIn = true
+      userState.username = username
+      userState.role = role
+      userState.userId = userId
+      userState.loginError = ''
+      
+      // 生成对应角色的模拟数据
+      userState.generateMockData(role)
+      console.log(`已初始化用户状态: ${userState.username}, 角色: ${userState.role}`)
+    } else {
+      // 默认使用学生角色和模拟数据，方便开发和测试
+      console.log('使用默认学生角色进行测试')
+      userState.isLoggedIn = true
+      userState.username = 'student1'
+      userState.role = 'student'
+      userState.userId = '101'
+      userState.loginError = ''
+      userState.generateMockData('student')
+      
+      // 保存默认测试用户到localStorage
+      localStorage.setItem('userToken', 'mock-token-for-testing')
+      localStorage.setItem('username', 'student1')
+      localStorage.setItem('userRole', 'student')
+      localStorage.setItem('userId', '101')
+    }
+  } catch (error) {
+    console.error('初始化用户状态时出错:', error)
+    // 出错时重置为安全默认值
+    userState.isLoggedIn = false
+    userState.username = ''
     userState.role = 'student'
-    userState.userId = '101'
-    userState.generateMockData('student')
-    // 保存默认测试用户到localStorage
-    localStorage.setItem('userToken', 'mock-token-for-testing')
-    localStorage.setItem('username', 'student1')
-    localStorage.setItem('userRole', 'student')
-    localStorage.setItem('userId', '101')
+    userState.userId = ''
+    userState.loginError = '初始化失败，请刷新页面重试'
   }
 }
 
+// 添加登录方法
+export function login(username, password, role) {
+  try {
+    // 确保角色值有效，添加superAdmin角色
+    const validRoles = ['student', 'teacher', 'admin', 'superAdmin']
+    const finalRole = validRoles.includes(role) ? role : 'student'
+    
+    // 模拟登录逻辑
+    userState.isLoggedIn = true
+    userState.username = username || '用户'
+    userState.role = finalRole
+    // 根据不同角色生成不同格式的用户ID
+    userState.userId = finalRole === 'teacher' ? 'T' + Math.floor(Math.random() * 1000) : 
+                       finalRole === 'admin' ? 'A' + Math.floor(Math.random() * 100) :
+                       finalRole === 'superAdmin' ? 'SA' + Math.floor(Math.random() * 100) :
+                       'S' + Math.floor(Math.random() * 1000)
+    userState.loginError = ''
+    
+    // 保存到localStorage
+    localStorage.setItem('userToken', `mock-token-${finalRole}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
+    localStorage.setItem('username', userState.username)
+    localStorage.setItem('userRole', finalRole)
+    localStorage.setItem('userId', userState.userId)
+    
+    // 生成对应角色的模拟数据
+    userState.generateMockData(finalRole)
+    
+    console.log(`用户登录成功: ${userState.username}, 角色: ${userState.role}`)
+    return true
+  } catch (error) {
+    console.error('登录时出错:', error)
+    userState.loginError = '登录失败，请重试'
+    userState.isLoggedIn = false
+    return false
+  }
+}
+
+// 添加登出方法
+export function logout() {
+  try {
+    // 重置用户状态
+    userState.isLoggedIn = false
+    userState.username = ''
+    userState.role = ''
+    userState.userId = ''
+    userState.loginError = ''
+    
+    // 清除localStorage
+    localStorage.removeItem('userToken')
+    localStorage.removeItem('username')
+    localStorage.removeItem('userRole')
+    localStorage.removeItem('userId')
+    
+    console.log('用户已登出')
+    return true
+  } catch (error) {
+    console.error('登出时出错:', error)
+    return false
+  }
+}
+
+// 检查用户是否有权限
+export function hasPermission(permission) {
+  // 超级管理员拥有所有权限
+  if (userState.role === 'superAdmin') {
+    return true
+  }
+  
+  // 基于角色的权限检查
+  const permissionMap = {
+    'student': ['VIEW_COURSE', 'VIEW_SCHEDULE', 'VIEW_SCORE'],
+    'teacher': ['VIEW_COURSE', 'CREATE_COURSE', 'EDIT_COURSE', 
+                'VIEW_SCHEDULE', 'CREATE_SCHEDULE', 'EDIT_SCHEDULE', 'DELETE_SCHEDULE',
+                'VIEW_SCORE', 'UPDATE_SCORE'],
+    'admin': ['VIEW_USER', 'CREATE_USER', 'EDIT_USER', 
+              'VIEW_COURSE', 'CREATE_COURSE', 'EDIT_COURSE', 'DELETE_COURSE',
+              'VIEW_SCHEDULE', 'CREATE_SCHEDULE', 'EDIT_SCHEDULE', 'DELETE_SCHEDULE',
+              'VIEW_LOGS']
+  }
+  
+  const rolePermissions = permissionMap[userState.role] || []
+  return rolePermissions.includes(permission)
+}
+
+// 检查用户是否有指定角色
+export function hasRole(role) {
+  if (userState.role === 'superAdmin') {
+    return true // 超级管理员拥有所有角色权限
+  }
+  return userState.role === role
+}
+
+// 获取用户所有权限列表
+export function getUserPermissions() {
+  if (userState.role === 'superAdmin') {
+    // 超级管理员的完整权限列表
+    return [
+      'VIEW_USER', 'CREATE_USER', 'EDIT_USER', 'DELETE_USER', 'IMPORT_USER',
+      'VIEW_COURSE', 'CREATE_COURSE', 'EDIT_COURSE', 'DELETE_COURSE',
+      'VIEW_SCHEDULE', 'CREATE_SCHEDULE', 'EDIT_SCHEDULE', 'DELETE_SCHEDULE',
+      'VIEW_SCORE', 'UPDATE_SCORE', 'IMPORT_SCORE',
+      'SYSTEM_CONFIG', 'DATA_BACKUP', 'DATA_RESTORE', 'VIEW_LOGS',
+      'MANAGE_ROLES', 'MANAGE_PERMISSIONS'
+    ]
+  }
+  
+  const permissionMap = {
+    'student': ['VIEW_COURSE', 'VIEW_SCHEDULE', 'VIEW_SCORE'],
+    'teacher': ['VIEW_COURSE', 'CREATE_COURSE', 'EDIT_COURSE', 
+                'VIEW_SCHEDULE', 'CREATE_SCHEDULE', 'EDIT_SCHEDULE', 'DELETE_SCHEDULE',
+                'VIEW_SCORE', 'UPDATE_SCORE'],
+    'admin': ['VIEW_USER', 'CREATE_USER', 'EDIT_USER', 
+              'VIEW_COURSE', 'CREATE_COURSE', 'EDIT_COURSE', 'DELETE_COURSE',
+              'VIEW_SCHEDULE', 'CREATE_SCHEDULE', 'EDIT_SCHEDULE', 'DELETE_SCHEDULE',
+              'VIEW_LOGS']
+  }
+  
+  return permissionMap[userState.role] || []
+}
+
+// 添加命名导出，支持import { userState } from '../store'语法
+export { userState }
 export default userState
